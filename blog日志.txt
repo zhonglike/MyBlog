@@ -1,0 +1,179 @@
+================================================
+  MyBlog V1.7-9beta 总结报告
+  更新日期: 2026-06-27
+================================================
+
+一、项目概述
+  MyBlog 个人博客系统
+  版本: V1.7-9beta
+  技术栈: Node.js + Express 5 + SQLite + Cloudflare Tunnel
+  端口: 3000
+  启动方式:
+    - 内网: blogserver.bat (node server.js)
+    - 外网: blogI.bat (node start-tunnel.js + cloudflared)
+
+二、版本 V1.7 主要更新
+
+  1. 上传大文件修复
+     - 新增 multer 错误处理中间件，上传错误返回 JSON 而非 HTML
+     - 服务器超时从默认 2 分钟延长至 10 分钟
+     - 前端上传增加 try-catch 和 JSON 解析容错
+     - 问题: 113MB 视频上传失败 (Timeout / 无响应)
+     - 涉及文件: src/routes/media.js, server.js, public/js/app.js
+
+  2. 版本标识
+     - 页脚添加版本号
+     - 涉及文件: public/index.html
+
+  3. 二级密码置顶 (V1.7-5 beta)
+     - 修复二级密码弹窗被其他弹窗遮挡的问题
+     - 原因: 所有弹窗 z-index 均为 200，sec-password-modal 在 DOM 中靠前，被后定义的弹窗覆盖
+     - 修复: sec-password-modal 独立 z-index: 300，确保始终置顶
+     - 涉及文件: public/css/main.css
+
+  4. 大文件上传深度修复 (V1.7-7beta)
+     - Express 5 的 express.json/urlencoded 可能干扰 multer 的 multipart 解析
+     - 修复: 全局 body 解析器跳过 multipart 请求，直接交由 multer 处理
+     - 新增: 上传请求的诊断日志 (Content-Type / Content-Length)
+     - 涉及文件: server.js, src/routes/media.js
+
+  5. 媒体关联修复 (V1.7-8beta)
+     - 上传的视频/文件在存储到 post_id = NULL，新建帖子后未关联
+     - 新增: PUT /api/media/link 端点，批量更新 media 的 post_id
+     - 前端: savePost 新建帖子后自动调用 batchLinkMedia 关联已上传文件
+     - 涉及文件: src/routes/media.js, public/js/app.js
+
+  6. 视频识别与下载功能 (V1.7-9beta)
+     - 有些浏览器上传视频时 MIME type 非 video/*，导致 filetype 被误判为 'file'
+     - 修复: 新增 getFiletypeByExt() 按扩展名二次判断 (mp4/webm/mov 等)
+     - 前端: isVideo/isImage 函数同时检查 filetype、MIME type、扩展名
+     - 下载: 帖子详情底部所有附件都显示下载按钮
+     - 涉及文件: src/routes/media.js, public/js/app.js
+
+三、功能清单
+
+  - 用户: 登录 / 注册 / 一级密码 / 二级密码
+  - 帖子: 创建 / 编辑 / 删除 / Markdown 编辑 / 分类 / 标签 / 置顶
+  - 媒体: 图片 / 视频 / 文件上传下载 / 拖拽上传
+  - 展示: 暗色 / 亮色 / 赛博朋克 三种主题
+  - 视频池: B站 / YouTube 外链嵌入 / 每日推荐 / 三角洲专区
+  - 设置: 博客标题 / 布局排序 / 个人资料 / 备份导出
+  - 统计: 数据看板 / 浏览历史 / 个人主页
+
+四、项目结构
+
+  server.js          - 主入口 (Express 5)
+  config.js          - 全局配置
+  start-tunnel.js    - Cloudflare 隧道启动
+  cloudflared.exe    - Cloudflare 隧道客户端
+  db/                - SQLite 数据库
+  public/            - 前端静态文件
+    index.html       - 主页面 (页脚版本号)
+    css/             - 样式文件 (main.css / theme-*.css)
+    js/              - JavaScript (app.js / auth.js / theme.js)
+  src/
+    routes/          - 后端路由 (auth / posts / media / categories 等)
+    middleware/      - 中间件 (auth 验证)
+    db.js            - 数据库初始化
+  uploads/           - 上传文件存储 (images / videos / files)
+
+五、待优化方向
+
+  - 上传进度条显示
+  - 大文件分片上传
+  - 图片压缩/缩略图
+  - HTTPS 支持
+  - 移动端适配优化
+
+================================================
+
+== V1.8-1beta 更新 (2026-06-27) ==
+
+【新增】Plyr 视频播放器
+  - 集成 plyr.io CDN (3.7.8)，替换原生 <video> 标签
+  - 自动初始化详情页中的视频
+  - closeDetail 时自动销毁 plyr 实例释放资源
+
+【新增】图片灯箱（Lightbox）
+  - 帖子详情图片点击后全屏浏览
+  - 支持前后切换（鼠标点击/左右箭头键）
+  - ESC 关闭
+  - 我的主页 → 画廊中图片也使用灯箱
+
+【修改】closeDetail 增加 plyr 清理逻辑
+
+【修改】index.html 新增 lightbox 遮罩层、plyr CSS/JS CDN 引用
+
+【修改】main.css 新增光箱样式
+
+== V1.8-2beta 更新 (2026-06-27) ==
+
+【修复】closeDetail 在含上传文件的帖子中无法关闭的问题
+  - 原因：Plyr destroy 或 video 清理可能抛异常阻塞 display=none
+  - 修复：所有清理操作包在 try-catch 中
+
+【重构】搜索区独立展示
+  - 搜索框从导航栏中移出，作为独立搜索区置于正文上方
+  - 搜索按钮 + 全文检索按钮并列
+
+【新增】标题搜索（基础搜索）
+  - 主页搜索框仅搜索帖子标题，不再搜正文/标签
+
+【新增】全文检索（高级搜索）
+  - 点击"全文检索 ▾"展开输入框，可搜索标题 + 正文 + 标签
+  - 后端新增 fulltext 参数，对应 SQL: title/content/tags LIKE
+
+【新增】更多帖子按钮
+  - "最新"栏底部增加"更多帖子 →"按钮，分页加载（20条/页）
+  - "视频"栏底部增加"更多视频 →"按钮，分页加载
+  - 页码初始化为1，新搜索/筛选时重置
+
+【修改】index.html 导航栏移除搜索框，新增搜索区和更多按钮
+
+【修改】main.css 新增搜索区样式、更多按钮样式
+
+【修改】posts.js listPosts: search 改为仅搜 title，新增 fulltext 参数搜 title/content/tags
+
+== V1.8-3beta 更新 (2026-06-27) ==
+
+【新增】搜索结果独立页面
+  - 搜索后隐藏主内容区，显示专门的搜索结果页
+  - 显示搜索关键词和匹配总数
+  - 支持分页（更多结果 →）
+  - 点击"关闭"恢复主内容区
+  - 点击分类筛选自动关闭搜索结果页
+
+== V1.9-1beta 更新 (2026-06-27) ==
+
+【重磅新增】AI 智能助手
+  - 页面右下角浮动 🤖 按钮，点击打开 AI 聊天面板
+  - 四种模式一键切换：
+    · 💬 自由提问 — 通用 AI 问答
+    · 📰 新闻汇总 — 新闻资讯整理
+    · 🎮 游戏攻略 — 游戏技巧与攻略
+    · 🔑 三角洲密码 — 三角洲行动攻略/密码查询
+  - 支持对话历史，加载中状态提示
+  - 错误消息直接显示在面板内
+
+【新增】AI 配置页面（设置 → 🤖 AI）
+  - 可配置 API 地址（默认 https://api.openai.com/v1）
+  - API Key 输入
+  - 模型名称（默认 gpt-3.5-turbo）
+  - 支持所有 OpenAI 兼容接口
+
+【新增】后端 /api/ai/chat 接口
+  - 调用 OpenAI 兼容 API，返回 AI 回复
+  - 四种系统级角色预设 prompt
+  - 支持对话历史传递（最近 10 条）
+  - 配置保存在 settings 表
+
+【修改】config.js 新增 AI 默认配置
+【修改】server.js 注册 AI 路由
+
+== V1.9-2beta 更新 (2026-06-27) ==
+
+【新增】Google Gemini 原生支持
+  - 设置 → 🤖 AI 可切换提供商：OpenAI 兼容 / Google Gemini
+  - Gemini 模式下自动使用原生 API 格式（无需填写 API 地址）
+  - 选择 Gemini 后自动隐藏 API 地址、模型字段
+  - 模型推荐 gemini-2.0-flash / gemini-2.5-flash

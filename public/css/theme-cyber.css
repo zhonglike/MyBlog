@@ -1,0 +1,151 @@
+/* ===== 赛博朋克主题 ===== */
+:root[data-theme="cyber"] {
+  --bg-primary: #0d0221;
+  --bg-secondary: #150535;
+  --bg-card: #1a064a;
+  --bg-nav: #150535;
+  --bg-modal: #1a064a;
+  --bg-input: #0d0221;
+  --bg-hover: #2a0a6e;
+  --bg-code: #0a0118;
+
+  --text-primary: #e0e0ff;
+  --text-secondary: #b0b0d0;
+  --text-muted: #606090;
+  --text-inverse: #0d0221;
+
+  --accent: #ff006e;
+  --accent-light: #ff4d94;
+  --accent-hover: #cc0058;
+  --link: #00f5ff;
+  --link-hover: #00c8d4;
+
+  --border: #2a0a6e;
+  --border-light: #ff006e33;
+
+  --shadow-sm: 0 1px 3px rgba(255,0,110,0.15);
+  --shadow-md: 0 4px 12px rgba(255,0,110,0.2);
+  --shadow-lg: 0 8px 24px rgba(0,245,255,0.15);
+  --shadow-card: 0 2px 8px rgba(255,0,110,0.1);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --glass-bg: rgba(26,6,74,0.9);
+  --glass-border: rgba(255,0,110,0.3);
+
+  --success: #00f5ff;
+  --warning: #ff006e;
+  --danger: #ff006e;
+
+  --tag-bg: #2a0a6e;
+  --tag-text: #00f5ff;
+}
+
+/* 赛博朋克专属特效 */
+:root[data-theme="cyber"] .navbar {
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: 0 0 20px rgba(255,0,110,0.1), 0 0 60px rgba(0,245,255,0.05);
+}
+
+:root[data-theme="cyber"] .card:hover {
+  box-shadow: 0 0 15px rgba(255,0,110,0.3), 0 0 40px rgba(0,245,255,0.1);
+  border-color: #ff006e66;
+}
+
+:root[data-theme="cyber"] .btn-primary {
+  background: linear-gradient(135deg, #ff006e, #cc0058);
+  box-shadow: 0 0 10px rgba(255,0,110,0.4);
+  text-shadow: 0 0 8px rgba(255,0,110,0.6);
+}
+
+:root[data-theme="cyber"] .btn-primary:hover {
+  box-shadow: 0 0 20px rgba(255,0,110,0.6), 0 0 40px rgba(255,0,110,0.3);
+}
+
+:root[data-theme="cyber"] .section-title {
+  text-shadow: 0 0 10px var(--accent), 0 0 30px rgba(255,0,110,0.3);
+}
+
+:root[data-theme="cyber"] .logo-icon {
+  filter: drop-shadow(0 0 6px #ff006e) drop-shadow(0 0 15px rgba(0,245,255,0.5));
+}
+
+:root[data-theme="cyber"] .nav-title {
+  text-shadow: 0 0 8px #ff006e, 0 0 20px rgba(0,245,255,0.3);
+  font-weight: 900;
+}
+
+/* 扫描线效果 */
+:root[data-theme="cyber"] body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,245,255,0.03) 2px,
+    rgba(0,245,255,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  animation: scanline 8s linear infinite;
+}
+
+@keyframes scanline {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+/* 故障特效 - 随机应用在标题 */
+:root[data-theme="cyber"] .detail-title,
+:root[data-theme="cyber"] .modal-header h2 {
+  animation: glitch 3s infinite;
+}
+
+@keyframes glitch {
+  0%, 90%, 100% { transform: none; opacity: 1; }
+  92% { transform: translate(-2px, 1px); opacity: 0.8; }
+  94% { transform: translate(2px, -1px); opacity: 0.9; }
+  96% { transform: translate(-1px, 2px); opacity: 0.7; }
+  98% { transform: translate(1px, -2px); opacity: 0.95; }
+}
+
+:root[data-theme="cyber"] .search-box:focus {
+  border-color: #00f5ff;
+  box-shadow: 0 0 10px rgba(0,245,255,0.3), 0 0 30px rgba(0,245,255,0.1);
+}
+
+:root[data-theme="cyber"] .upload-dropzone {
+  border-color: #ff006e44;
+  background: linear-gradient(135deg, rgba(255,0,110,0.05), rgba(0,245,255,0.03));
+}
+
+:root[data-theme="cyber"] .upload-dropzone:hover {
+  border-color: #ff006e;
+  box-shadow: 0 0 15px rgba(255,0,110,0.2);
+}
+
+/* 视频卡片赛博特效 */
+:root[data-theme="cyber"] .video-card:hover {
+  box-shadow: 0 0 20px rgba(0,245,255,0.3), 0 0 40px rgba(255,0,110,0.2);
+  transform: scale(1.02);
+}
+
+:root[data-theme="cyber"] .video-card .video-play-icon {
+  color: #00f5ff;
+  filter: drop-shadow(0 0 10px rgba(0,245,255,0.6));
+}
+
+/* 霓虹光晕 */
+:root[data-theme="cyber"] .login-card {
+  box-shadow: 0 0 30px rgba(255,0,110,0.2), 0 0 60px rgba(0,245,255,0.1), 0 0 100px rgba(255,0,110,0.05);
+  border: 1px solid #ff006e33;
+}
+
+:root[data-theme="cyber"] .modal {
+  box-shadow: 0 0 30px rgba(255,0,110,0.2), 0 0 60px rgba(0,245,255,0.1);
+  border: 1px solid #ff006e33;
+}

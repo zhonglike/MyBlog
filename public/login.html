@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="auth.login_title">MyBlog - Login</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/theme-dark.css" id="theme-css">
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-logo">
+        <span class="logo-icon">📝</span>
+        <h1>MyBlog</h1>
+        <p data-i18n="auth.subtitle">Personal Blog · Local Hosting</p>
+      </div>
+
+      <!-- Language Switcher -->
+      <div class="login-lang" style="text-align:center;margin-bottom:16px">
+        <select id="login-lang" onchange="setLang(this.value)" style="padding:4px 8px;border-radius:var(--radius-sm);background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border)">
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+        </select>
+      </div>
+
+      <!-- Login Form -->
+      <div id="login-form" class="login-form">
+        <div class="form-group">
+          <label data-i18n="auth.username">Username</label>
+          <input type="text" id="login-username" data-i18n="auth.username_placeholder" placeholder="Enter username" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label data-i18n="auth.password">Password</label>
+          <input type="password" id="login-password" data-i18n="auth.password_placeholder" placeholder="Enter password" autocomplete="current-password">
+        </div>
+        <button class="btn-primary" id="login-btn" data-i18n="auth.login_btn">Login</button>
+        <button class="btn-secondary" id="show-register-btn" style="margin-top:8px" data-i18n="auth.register_btn">Register</button>
+        <div id="login-error" class="form-error"></div>
+      </div>
+
+      <!-- Register Form -->
+      <div id="register-form" class="login-form" style="display:none">
+        <div class="form-group">
+          <label data-i18n="auth.reg_username">Username</label>
+          <input type="text" id="reg-username" data-i18n="auth.username_placeholder" placeholder="Enter username" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label data-i18n="auth.reg_password">Password</label>
+          <input type="password" id="reg-password" data-i18n="auth.reg_password_placeholder" placeholder="Enter password (min 6 chars)" autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label data-i18n="auth.reg_secondary">Secondary Password (optional, for sensitive operations)</label>
+          <input type="password" id="reg-secondary" data-i18n="auth.reg_secondary_placeholder" placeholder="Short password, e.g. 4 digits (min 2 chars)" autocomplete="off" maxlength="20">
+          <span style="font-size:12px;color:var(--text-muted)" data-i18n="auth.reg_secondary_hint">Used for secondary verification on edit, delete, settings, etc.</span>
+        </div>
+        <button class="btn-primary" id="register-btn" data-i18n="auth.register_submit">Register</button>
+        <button class="btn-secondary" id="back-login-btn" style="margin-top:8px" data-i18n="auth.back_login">Back to Login</button>
+        <div id="register-error" class="form-error"></div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/theme.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    // Sync language selector with saved preference
+    const loginLang = document.getElementById('login-lang');
+    if (loginLang) loginLang.value = getLang();
+  </script>
+</body>
+</html>

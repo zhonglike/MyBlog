@@ -1,0 +1,1 @@
+🚀 Self-hosted personal blog — Node.js + Express + SQLite. 📝 Markdown posts, 🖼️ media uploads, 🎨 3 themes, 🤖 AI assistant, 🎬 video recommendations, 🔐 JWT auth + secondary password, 💾 one-click backup, 🌐 Cloudflare Tunnel for public access.

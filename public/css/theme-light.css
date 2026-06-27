@@ -1,0 +1,44 @@
+/* ===== 亮色主题 ===== */
+:root[data-theme="light"] {
+  --bg-primary: #f5f6fa;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-nav: #ffffff;
+  --bg-modal: #ffffff;
+  --bg-input: #f0f1f5;
+  --bg-hover: #e8e9ed;
+  --bg-code: #f4f4f8;
+
+  --text-primary: #2d3436;
+  --text-secondary: #636e72;
+  --text-muted: #b2bec3;
+  --text-inverse: #ffffff;
+
+  --accent: #2d3436;
+  --accent-light: #636e72;
+  --accent-hover: #1e272e;
+  --link: #0984e3;
+  --link-hover: #0769c0;
+
+  --border: #dfe6e9;
+  --border-light: #ecf0f1;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.06);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  --glass-bg: rgba(255,255,255,0.85);
+  --glass-border: rgba(255,255,255,0.5);
+
+  --success: #00b894;
+  --warning: #fdcb6e;
+  --danger: #e17055;
+
+  --tag-bg: #dfe6e9;
+  --tag-text: #2d3436;
+}

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyBlog</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/theme-dark.css" id="theme-css">
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+</head>
+<body>
+  <!-- 顶部导航 -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <span class="logo-icon">📝</span>
+      <span class="nav-title" id="blog-title">MyBlog</span>
+      <div class="nav-categories" id="nav-categories"></div>
+    </div>
+    <div class="nav-right">
+      <button class="theme-switcher" id="theme-switcher" data-i18n-title="nav.switch_theme" title="Switch theme">
+        <span id="theme-icon">🌙</span>
+      </button>
+      <button class="btn-nav" id="settings-btn" data-i18n-title="nav.settings" title="Settings">⚙</button>
+      <button class="btn-nav" id="new-post-btn" data-i18n="nav.new_post">+ New</button>
+      <div class="user-menu" id="user-menu">
+        <button class="avatar-btn" id="avatar-btn" data-i18n-title="nav.profile" title="Profile">
+          <span class="avatar-circle" id="avatar-circle">👤</span>
+        </button>
+        <span id="user-name" style="cursor:pointer"></span>
+        <button class="btn-small" id="logout-btn" data-i18n="nav.logout">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 个人主页视图 -->
+  <section class="profile-page" id="profile-page" style="display:none">
+    <!-- 资料卡 -->
+    <div class="profile-card">
+      <div class="profile-avatar-large" id="profile-avatar-large">👤</div>
+      <div class="profile-info">
+        <h1 class="profile-name" id="profile-name"></h1>
+        <p class="profile-bio" id="profile-bio"></p>
+        <div class="profile-meta">
+          <span id="profile-joined">📅 注册时间: --</span>
+          <span id="profile-post-count">📝 发帖: --</span>
+          <span id="profile-total-views">👁 浏览: --</span>
+        </div>
+      </div>
+      <button class="btn-secondary" id="profile-edit-btn" style="margin-top:16px" data-i18n="profile.edit">Edit Profile</button>
+    </div>
+
+    <!-- 数据统计面板 -->
+    <div class="profile-stats-panel">
+      <h2 class="section-title" data-i18n="profile.stats">📊 Statistics</h2>
+      <div class="stats-overview">
+        <div class="stat-item">
+          <div class="stat-number" id="stat-posts">0</div>
+          <div class="stat-label" data-i18n="profile.posts_label">Posts</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="stat-views">0</div>
+          <div class="stat-label" data-i18n="profile.views_label">Total Views</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="stat-images">0</div>
+          <div class="stat-label" data-i18n="profile.images_label">Images</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="stat-videos">0</div>
+          <div class="stat-label" data-i18n="profile.videos_label">Videos</div>
+        </div>
+      </div>
+      <!-- 分类分布 -->
+      <div class="category-dist" id="category-dist"></div>
+      <!-- 最热帖子 -->
+      <h3 class="subsection-title" data-i18n="profile.top_posts">🔥 Top Posts</h3>
+      <div class="top-posts-list" id="top-posts-list"></div>
+    </div>
+
+    <!-- 最新博文 -->
+    <div class="profile-recent-section">
+      <h2 class="section-title" data-i18n="profile.recent_posts">📝 Recent Posts</h2>
+      <div class="card-grid" id="profile-recent-list"></div>
+    </div>
+
+    <!-- 媒体画廊 -->
+    <div class="profile-gallery-section">
+      <h2 class="section-title" data-i18n="profile.gallery">🖼 Media Gallery</h2>
+      <div class="gallery-grid" id="profile-gallery-grid"></div>
+    </div>
+
+    <!-- 浏览历史 -->
+    <div class="profile-history-section">
+      <h2 class="section-title" data-i18n="profile.history">📜 History</h2>
+      <div class="history-list" id="history-list">
+        <div class="empty-state" data-i18n="profile.no_history">No browsing history yet</div>
+      </div>
+      <button class="btn-secondary" id="load-more-history-btn" style="margin-top:12px;display:none" data-i18n="profile.load_more">Load More</button>
+    </div>
+
+    <button class="btn-secondary" id="profile-back-btn" style="margin-top:24px" data-i18n="profile.back">← Back to Home</button>
+  </section>
+
+  <!-- 搜索区 -->
+  <section class="search-section" id="search-section">
+    <div class="search-bar-wrapper">
+      <input type="text" class="search-box" id="search-input" data-i18n="search.placeholder" placeholder="Search title...">
+      <button class="btn-search" id="search-btn" data-i18n="search.btn">Search</button>
+      <button class="btn-search secondary" id="fulltext-toggle" data-i18n="search.fulltext_toggle">Fulltext ▾</button>
+    </div>
+    <div class="fulltext-search" id="fulltext-panel" style="display:none">
+      <input type="text" class="search-box" id="fulltext-input" data-i18n="search.fulltext_placeholder" placeholder="Search tags & content...">
+      <button class="btn-search" id="fulltext-btn" data-i18n="search.fulltext_btn">Search</button>
+    </div>
+  </section>
+
+  <!-- 主内容区 -->
+  <main class="main-content">
+    <section class="section pinned-section" id="pinned-section">
+      <h2 class="section-title" data-i18n="section.pinned">📌 Pinned</h2>
+      <div class="pinned-list" id="pinned-list"></div>
+    </section>
+    <section class="section recommend-section" id="recommend-section">
+      <h2 class="section-title" data-i18n="section.recommend">🔥 Today's Picks</h2>
+      <div class="recommend-layout" id="recommend-layout">
+        <!-- 1大+4小 推荐视频布局 -->
+      </div>
+    </section>
+    <section class="section delta-section" id="delta-section">
+      <h2 class="section-title" data-i18n="section.delta">🎯 Delta Force Zone</h2>
+      <div class="delta-grid" id="delta-list"></div>
+    </section>
+    <section class="section latest-section" id="latest-section">
+      <h2 class="section-title" data-i18n="section.latest">📰 Latest</h2>
+      <div class="card-grid" id="latest-list"></div>
+      <button class="btn-more" id="more-latest" onclick="loadMorePosts()" data-i18n="section.more_posts">More Posts →</button>
+    </section>
+
+    <!-- Combined: Latest + Categories -->
+    <section class="section latest-categories-section" id="latest-categories-section" style="display:none">
+      <h2 class="section-title" data-i18n="section.latest">📰 Latest</h2>
+      <div class="category-filter-bar" id="combined-category-bar"></div>
+      <div class="card-grid" id="combined-latest-list"></div>
+    </section>
+    <section class="section videos-section" id="videos-section">
+      <h2 class="section-title" data-i18n="section.videos">🎬 Videos</h2>
+      <div class="video-grid" id="video-list"></div>
+      <button class="btn-more" id="more-videos" onclick="loadMoreVideos()" data-i18n="section.more_videos">More Videos →</button>
+    </section>
+    <section class="section categories-section" id="categories-section">
+      <h2 class="section-title" data-i18n="section.categories">📂 Categories</h2>
+      <div class="category-list" id="category-list"></div>
+    </section>
+  </main>
+
+  <!-- 搜索结果页 -->
+  <section class="search-results-page" id="search-results-page" style="display:none">
+    <div class="search-results-header">
+      <h2 class="section-title" data-i18n="search.results_title">🔍 Search Results</h2>
+      <button class="btn-secondary" id="search-results-close" data-i18n="search.close">Close</button>
+    </div>
+    <div class="search-results-meta" id="search-results-meta"></div>
+    <div class="card-grid" id="search-results-list"></div>
+    <button class="btn-more" id="more-search-results" onclick="loadMoreSearchResults()" data-i18n="search.more">More Results →</button>
+  </section>
+
+  <!-- 二级密码验证弹窗 -->
+  <div class="modal-overlay" id="sec-password-modal" style="display:none">
+    <div class="modal sec-password-modal">
+      <div class="modal-header">
+        <h2 data-i18n="sec.title">🔒 Secondary Password</h2>
+        <button class="modal-close" id="sec-close">✕</button>
+      </div>
+      <div class="sec-password-body" style="padding:24px;text-align:center">
+        <p style="color:var(--text-secondary);margin-bottom:16px" data-i18n="sec.desc">This operation requires secondary password verification</p>
+        <input type="password" id="sec-password-input" data-i18n="sec.placeholder" placeholder="Enter secondary password" maxlength="20" style="text-align:center;font-size:24px;padding:12px;width:200px;border-radius:var(--radius-md);border:2px solid var(--border);background:var(--bg-input);color:var(--text-primary)">
+        <div id="sec-error" class="form-error" style="margin-top:12px"></div>
+        <button class="btn-primary" id="sec-confirm-btn" style="margin-top:16px" data-i18n="sec.confirm_btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 设置弹窗 -->
+  <div class="modal-overlay" id="settings-modal" style="display:none">
+    <div class="modal settings-modal" style="max-width:700px">
+      <div class="modal-header">
+        <h2 data-i18n="settings.title">⚙ Settings</h2>
+        <button class="modal-close" id="settings-close">✕</button>
+      </div>
+      <div class="settings-body" style="padding:24px">
+        <!-- Settings Tabs -->
+        <div class="settings-tabs">
+          <button class="settings-tab active" data-tab="profile" data-i18n="settings.tab_profile">👤 Account</button>
+          <button class="settings-tab" data-tab="appearance" data-i18n="settings.tab_appearance">🎨 Appearance</button>
+          <button class="settings-tab" data-tab="preferences" data-i18n="settings.tab_preferences">⚙ Preferences</button>
+          <button class="settings-tab" data-tab="ai" data-i18n="settings.tab_ai">🤖 AI</button>
+          <button class="settings-tab" data-tab="backup" data-i18n="settings.tab_backup">💾 Backup</button>
+        </div>
+
+        <!-- 账户信息 -->
+        <div class="settings-panel active" id="settings-profile">
+          <div class="form-group">
+            <label data-i18n="settings.display_name">Display Name</label>
+            <input type="text" id="setting-display-name" data-i18n="settings.display_name_placeholder" placeholder="Your display name">
+          </div>
+          <div class="form-group">
+            <label data-i18n="settings.change_password">Change Password</label>
+            <input type="password" id="setting-old-password" data-i18n="settings.old_password" placeholder="Old Password">
+            <input type="password" id="setting-new-password" data-i18n="settings.new_password" placeholder="New Password (min 6 chars)" style="margin-top:8px">
+            <button class="btn-secondary" id="change-password-btn" style="margin-top:8px" data-i18n="settings.change_password_btn">Change Password</button>
+          </div>
+          <div class="form-group">
+            <label data-i18n="settings.secondary_password">Secondary Password <span id="sec-status-text" style="font-size:12px;color:var(--text-muted)" data-i18n="settings.sec_not_set">Not set</span></label>
+            <input type="password" id="setting-new-secondary" data-i18n="settings.sec_placeholder" placeholder="Set new secondary password (min 2 chars, leave empty to clear)" maxlength="20">
+            <button class="btn-secondary" id="set-secondary-btn" style="margin-top:8px" data-i18n="settings.sec_set_btn">Set/Change Secondary Password</button>
+          </div>
+          <button class="btn-primary" id="save-profile-btn" data-i18n="settings.save_profile_btn">Save Account Info</button>
+        </div>
+
+        <!-- 个性化外观 -->
+        <div class="settings-panel" id="settings-appearance">
+          <div class="form-group">
+            <label data-i18n="settings.blog_title">Blog Title</label>
+            <input type="text" id="setting-blog-title" data-i18n="settings.blog_title_placeholder" placeholder="MyBlog">
+          </div>
+          <div class="form-group">
+            <label data-i18n="settings.blog_subtitle">Blog Subtitle</label>
+            <input type="text" id="setting-blog-subtitle" data-i18n="settings.blog_subtitle_placeholder" placeholder="My Personal Blog">
+          </div>
+          <div class="form-group" id="lang-setting-group">
+            <label data-i18n="settings.language">Language</label>
+            <select id="setting-language" onchange="setLang(this.value)"></select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="settings.theme">Theme</label>
+            <div class="theme-options">
+              <button class="theme-option" data-theme="dark" onclick="applySettingTheme('dark')" data-i18n="settings.theme_dark">🌙 Dark</button>
+              <button class="theme-option" data-theme="light" onclick="applySettingTheme('light')" data-i18n="settings.theme_light">☀️ Light</button>
+              <button class="theme-option" data-theme="cyber" onclick="applySettingTheme('cyber')" data-i18n="settings.theme_cyber">⚡ Cyberpunk</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label data-i18n="settings.layout">Homepage Module Layout (drag to reorder)</label>
+            <div class="layout-sort-list" id="layout-sort-list">
+              <div class="layout-sort-item" draggable="true" data-section="pinned" data-i18n="settings.layout_pinned">📌 Pinned</div>
+              <div class="layout-sort-item" draggable="true" data-section="recommend" data-i18n="settings.layout_recommend">🔥 Recommend</div>
+              <div class="layout-sort-item" draggable="true" data-section="delta" data-i18n="settings.layout_delta">🎯 Delta</div>
+              <div class="layout-sort-item" draggable="true" data-section="latest+categories" data-i18n="settings.layout_latest_categories">📰 Latest + 📂 Categories</div>
+              <div class="layout-sort-item" draggable="true" data-section="latest" data-i18n="settings.layout_latest">📰 Latest (alone)</div>
+              <div class="layout-sort-item" draggable="true" data-section="categories" data-i18n="settings.layout_categories">📂 Categories (alone)</div>
+              <div class="layout-sort-item" draggable="true" data-section="videos" data-i18n="settings.layout_videos">🎬 Videos</div>
+            </div>
+          </div>
+          <button class="btn-primary" id="save-appearance-btn" data-i18n="settings.save_appearance_btn">Save Appearance</button>
+        </div>
+
+        <!-- 内容偏好 -->
+        <div class="settings-panel" id="settings-preferences">
+          <div class="form-group">
+            <label data-i18n="settings.default_category">Default Category</label>
+            <select id="setting-default-category">
+              <option value="" data-i18n="settings.all_categories">All</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="settings.page_size">Posts Per Page</label>
+            <select id="setting-page-size">
+              <option value="10" data-i18n="settings.page_size_10">10 posts</option>
+              <option value="20" selected data-i18n="settings.page_size_20">20 posts</option>
+              <option value="30" data-i18n="settings.page_size_30">30 posts</option>
+              <option value="50" data-i18n="settings.page_size_50">50 posts</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="settings.default_sort">Default Sort</label>
+            <select id="setting-default-sort">
+              <option value="newest" data-i18n="settings.sort_newest">Newest First</option>
+              <option value="popular" data-i18n="settings.sort_popular">Most Viewed</option>
+            </select>
+          </div>
+          <button class="btn-primary" id="save-preferences-btn" data-i18n="settings.save_preferences_btn">Save Preferences</button>
+        </div>
+
+        <!-- AI 配置 -->
+        <div class="settings-panel" id="settings-ai">
+          <h3 style="margin-bottom:16px" data-i18n="settings.ai_title">🤖 AI Assistant Config</h3>
+          <div class="form-group">
+            <label data-i18n="settings.ai_provider">API Provider</label>
+            <select class="form-input" id="setting-ai-provider">
+              <option value="openai" data-i18n="settings.ai_provider_openai">OpenAI Compatible (OpenAI / Ollama / Azure etc.)</option>
+              <option value="gemini" data-i18n="settings.ai_provider_gemini">Google Gemini (Native)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="settings.ai_api_key">API Key</label>
+            <input type="password" class="form-input" id="setting-ai-key" data-i18n="settings.ai_api_key_placeholder" placeholder="sk-... or Gemini API Key">
+          </div>
+          <div class="form-group" id="ai-endpoint-group">
+            <label data-i18n="settings.ai_endpoint">API Endpoint</label>
+            <input type="text" class="form-input" id="setting-ai-endpoint" data-i18n="settings.ai_endpoint_placeholder" placeholder="https://api.openai.com/v1">
+          </div>
+          <div class="form-group" id="ai-model-group">
+            <label data-i18n="settings.ai_model">Model Name</label>
+            <input type="text" class="form-input" id="setting-ai-model" data-i18n="settings.ai_model_placeholder" placeholder="gpt-3.5-turbo / gemini-2.0-flash">
+          </div>
+          <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px" data-i18n="settings.ai_gemini_hint">
+            In Gemini mode, no need to fill API endpoint. Recommended models: gemini-2.0-flash or gemini-2.5-flash
+          </p>
+          <button class="btn-primary" id="save-ai-btn" data-i18n="settings.save_ai_btn">Save AI Config</button>
+        </div>
+
+        <!-- 数据备份 -->
+        <div class="settings-panel" id="settings-backup">
+          <p style="color:var(--text-secondary);margin-bottom:16px" data-i18n="settings.backup_desc">
+            Export all data (database + uploaded files) as a ZIP archive for backup or migration.
+          </p>
+          <button class="btn-primary" id="export-data-btn" style="font-size:16px;padding:12px 32px" data-i18n="settings.export_btn">
+            📦 Export Backup
+          </button>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:12px" data-i18n="settings.export_hint">
+            The export will include the database (blog.db) and all uploaded images/videos/files
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 编辑器弹窗 -->
+  <div class="modal-overlay" id="editor-modal" style="display:none">
+    <div class="modal editor-modal">
+      <div class="modal-header">
+        <h2 id="editor-title" data-i18n="editor.new_title">New Post</h2>
+        <button class="modal-close" id="editor-close">✕</button>
+      </div>
+      <div class="editor-body">
+        <div class="form-group">
+          <label data-i18n="editor.title_label">Title</label>
+          <input type="text" id="post-title" data-i18n="editor.title_placeholder" placeholder="Post title">
+        </div>
+        <div class="form-group">
+          <label data-i18n="editor.type_label">Type</label>
+          <select id="post-type">
+            <option value="blog" data-i18n="editor.type_blog">Blog</option>
+            <option value="video" data-i18n="editor.type_video">Video</option>
+            <option value="gallery" data-i18n="editor.type_gallery">Gallery</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-i18n="editor.category_label">Category</label>
+          <select id="post-category"></select>
+        </div>
+        <div class="form-group">
+          <label data-i18n="editor.tags_label">Tags (comma separated)</label>
+          <input type="text" id="post-tags" data-i18n="editor.tags_placeholder" placeholder="tech,gaming,review">
+        </div>
+        <div class="form-group" id="video-url-group" style="display:none">
+          <label data-i18n="editor.video_url_label">Video URL (Bilibili/YouTube)</label>
+          <input type="text" id="post-video-url" data-i18n="editor.video_url_placeholder" placeholder="Paste Bilibili or YouTube link">
+        </div>
+        <div class="form-group">
+          <label data-i18n="editor.pinned_label">Pinned</label>
+          <input type="checkbox" id="post-pinned">
+        </div>
+        <div class="editor-toolbar">
+          <button onclick="insertMd('**','**')" data-i18n-title="editor.bold" title="Bold">B</button>
+          <button onclick="insertMd('*','*')" data-i18n-title="editor.italic" title="Italic">I</button>
+          <button onclick="insertMd('## ','')" data-i18n-title="editor.heading" title="Heading">H</button>
+          <button onclick="insertMd('[',']()')" data-i18n-title="editor.link" title="Link">🔗</button>
+          <button onclick="insertMd('```\\n','\\n```')" data-i18n-title="editor.code" title="Code Block">⟨⟩</button>
+          <button onclick="insertMd('> ','')" data-i18n-title="editor.quote" title="Quote">❝</button>
+        </div>
+        <div class="form-group">
+          <label data-i18n="editor.content_label">Content (Markdown)</label>
+          <div class="editor-split">
+            <textarea id="post-content" class="editor-textarea" data-i18n="editor.content_placeholder" placeholder="Write in Markdown..."></textarea>
+            <div id="post-preview" class="editor-preview"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label data-i18n="editor.upload_label">Upload Files</label>
+          <div class="upload-area" id="upload-area">
+            <input type="file" id="file-input" multiple style="display:none">
+            <div class="upload-dropzone" id="upload-dropzone">
+              <span data-i18n="editor.upload_hint">📎 Drag files here, or click to select</span>
+              <span class="upload-hint" data-i18n="editor.upload_types">Supports images, videos, archives, docx, pdf, etc.</span>
+            </div>
+            <div class="upload-list" id="upload-list"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="save-post-btn" data-i18n="editor.save_btn">Save</button>
+        <button class="btn-secondary" id="cancel-post-btn" data-i18n="editor.cancel_btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 帖子详情弹窗 -->
+  <div class="modal-overlay" id="detail-modal" style="display:none">
+    <div class="modal detail-modal">
+      <div class="modal-header">
+        <h2 id="detail-title"></h2>
+        <button class="modal-close" id="detail-close">✕</button>
+      </div>
+      <div class="detail-body" id="detail-body"></div>
+      <div class="detail-footer" id="detail-footer"></div>
+    </div>
+  </div>
+
+  <!-- 分类管理弹窗 -->
+  <div class="modal-overlay" id="category-modal" style="display:none">
+    <div class="modal category-modal">
+      <div class="modal-header">
+        <h2 data-i18n="cat.title">Category Management</h2>
+        <button class="modal-close" onclick="closeCategoryModal()">✕</button>
+      </div>
+      <div class="category-manage-body" id="category-manage-body"></div>
+      <div class="category-add-form">
+        <input type="text" id="new-cat-name" data-i18n="cat.name_placeholder" placeholder="Category name">
+        <input type="text" id="new-cat-slug" data-i18n="cat.slug_placeholder" placeholder="slug (identifier)">
+        <input type="text" id="new-cat-icon" data-i18n="cat.icon_placeholder" placeholder="Icon emoji" value="📁">
+        <button class="btn-primary" onclick="addCategory()" data-i18n="cat.add_btn">Add Category</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <span>MyBlog V1.8-2beta</span>
+  </footer>
+
+  <!-- AI 聊天 -->
+  <button class="ai-chat-toggle" id="ai-chat-toggle" onclick="toggleAIChat()" data-i18n="ai.toggle">🤖 AI</button>
+  <div class="ai-chat-panel" id="ai-chat-panel" style="display:none">
+    <div class="ai-chat-header">
+      <span data-i18n="ai.title">🤖 AI Assistant</span>
+      <button class="ai-chat-close" onclick="toggleAIChat()">✕</button>
+    </div>
+    <div class="ai-chat-modes">
+      <button class="ai-mode-btn active" data-mode="chat" onclick="switchAIMode(this, 'chat')" data-i18n="ai.mode_chat">💬 Chat</button>
+      <button class="ai-mode-btn" data-mode="news" onclick="switchAIMode(this, 'news')" data-i18n="ai.mode_news">📰 News</button>
+      <button class="ai-mode-btn" data-mode="guide" onclick="switchAIMode(this, 'guide')" data-i18n="ai.mode_guide">🎮 Guide</button>
+      <button class="ai-mode-btn" data-mode="delta" onclick="switchAIMode(this, 'delta')" data-i18n="ai.mode_delta">🔑 Delta Codes</button>
+    </div>
+    <div class="ai-chat-messages" id="ai-chat-messages">
+      <div class="ai-msg ai-msg-bot">
+        <div class="ai-msg-content" data-i18n="ai.welcome_default">Hello! I'm your AI assistant. Ask me about news, game guides, Delta Force codes, or just chat!</div>
+      </div>
+    </div>
+    <div class="ai-chat-input-area">
+      <input type="text" class="ai-chat-input" id="ai-chat-input" data-i18n="ai.input_placeholder" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendAIMessage()">
+      <button class="ai-chat-send" onclick="sendAIMessage()" data-i18n="ai.send_btn">Send</button>
+    </div>
+  </div>
+
+  <!-- 图片灯箱 -->
+  <div class="lightbox-overlay" id="lightbox" style="display:none" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <button class="lightbox-nav lightbox-prev" id="lb-prev">‹</button>
+    <button class="lightbox-nav lightbox-next" id="lb-next">›</button>
+    <img class="lightbox-image" id="lightbox-img" src="" alt="">
+  </div>
+
+  <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+  <script src="/js/theme.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
