@@ -53,6 +53,7 @@ npm install
 
 # Start the server (internal network, port 3000)
 npm start
+有概率安装包里有
 ```
 
 Open `http://localhost:3000` in your browser.
