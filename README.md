@@ -1,6 +1,7 @@
 # MyBlog
 
 [**中文**](README_CN.md) | [**English**](README.md)
+Using AI to assist in creation
 
 A modern, self-hosted personal blog system built with **Node.js + Express 5 + SQLite (better-sqlite3)**.
 
