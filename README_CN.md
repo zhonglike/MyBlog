@@ -51,6 +51,7 @@ npm install
 
 # 启动服务（内网，端口 3000）
 npm start
+有概率安装包里有,外网也是
 ```
 
 浏览器打开 `http://localhost:3000` 即可访问。
