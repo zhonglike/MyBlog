@@ -5,7 +5,7 @@ Using AI to assist in creation
 
 A modern, self-hosted personal blog system built with **Node.js + Express 5 + SQLite (better-sqlite3)**.
 
-> Version: V1.7-9beta
+> Version: V1.7-9beta    **Requires Node.js environment https://nodejs.org/en/download**
 
 🌐 **Default language is English.** Switch to Chinese in Settings → Appearance → Language.
 
