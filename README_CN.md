@@ -5,7 +5,7 @@
 
 一款现代化的自部署个人博客系统，基于 **Node.js + Express 5 + SQLite (better-sqlite3)** 构建。
 
-> 版本: V1.7-9beta
+> 版本: V1.7-9beta   **需要环境nodejs https://nodejs.org/zh-cn/download**
 
 ## 功能特性
 
