@@ -1,6 +1,7 @@
 # MyBlog
 
 [**English**](README.md) | [**中文**](README_CN.md)
+使用AI协助创作
 
 一款现代化的自部署个人博客系统，基于 **Node.js + Express 5 + SQLite (better-sqlite3)** 构建。
 
